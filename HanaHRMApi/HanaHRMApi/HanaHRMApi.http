@@ -1,0 +1,6 @@
+@HanaHRMApi_HostAddress = http://localhost:5278
+
+GET {{HanaHRMApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

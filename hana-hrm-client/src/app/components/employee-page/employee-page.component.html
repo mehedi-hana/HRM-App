@@ -1,0 +1,814 @@
+<div class="container-fluid py-4">
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Employees</h5>
+                </div>
+                <div class="list-group list-group-flush employee-list">
+
+                    @for (employee of employees(); track employee.id) {
+                    <button type="button" class="list-group-item list-group-item-action"
+                        [class.active]="employee.id === selectedEmployeeId()" (click)="selectEmployee(employee)">
+                        <div>
+
+                            <strong>{{ employee.id }}</strong>
+                            - {{ employee.employeeName }}
+                            <br />
+                            <small class="text-muted">
+                                {{ employee.designationName || 'Unknown' }}
+                            </small>
+
+                        </div>
+                    </button>
+                    }
+
+                    @if (employees().length === 0) {
+                    <div class="list-group-item">No employees found.</div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="card shadow-sm h-100">
+                <div
+                    class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+                    <div>
+                        <h5 class="card-title mb-0">Employee Form</h5>
+                        <small class="text-muted">{{ mode() === 'view' ? 'View mode' : mode() === 'create' ? 'Add new
+                            employee' : 'Edit employee' }}</small>
+                    </div>
+                    <div class="btn-toolbar gap-2" role="toolbar" aria-label="Action buttons">
+                        @if (mode() === 'view') {
+                        <button type="button" class="btn btn-primary" (click)="startAdd()">Add</button>
+                        }
+
+                        @if (mode() === 'view' && selectedEmployee()) {
+                        <button type="button" class="btn btn-outline-secondary" (click)="enterEdit()">Edit</button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteEmployee()">Delete</button>
+                        }
+
+                        @if (mode() === 'create') {
+                        <button type="button" class="btn btn-success" (click)="save()">Save</button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+                        }
+
+                        @if (mode() === 'edit') {
+                        <button type="button" class="btn btn-success" (click)="update()">Update</button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="card-body form-body">
+                    @if (errorMessage()) {
+                    <div class="alert alert-danger">{{ errorMessage() }}</div>
+                    }
+                    <form [formGroup]="employeeForm" novalidate>
+                        <div class="mb-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Employee Name <span
+                                            class="text-danger fw-bold ms-1">*</span></label>
+                                    <input formControlName="employeeName" type="text" class="form-control"
+                                        [class.is-invalid]="control('employeeName').invalid && control('employeeName').touched"
+                                        [disabled]="!isFormEnabled()" />
+                                    @if (control('employeeName').invalid && control('employeeName').touched) {
+                                    <div class="invalid-feedback">
+                                        @if (control('employeeName').errors?.['required']) {
+                                        <div>Employee name is required.</div>
+                                        }
+                                        @if (control('employeeName').errors?.['maxlength']) {
+                                        <div>Maximum 250 characters allowed.</div>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Employee Name Bangla</label>
+                                    <input formControlName="employeeNameBangla" type="text" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Designation</label>
+                                    <select formControlName="idDesignation" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select designation</option>
+                                        @for (item of designations(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Department <span
+                                            class="text-danger fw-bold ms-1">*</span></label>
+                                    <select formControlName="idDepartment" class="form-select"
+                                        [class.is-invalid]="control('idDepartment').invalid && control('idDepartment').touched"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select department</option>
+                                        @for (item of departments(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                    @if (control('idDepartment').invalid && control('idDepartment').touched) {
+                                    <div class="invalid-feedback">
+                                        Department is required.
+                                    </div>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Section <span
+                                            class="text-danger fw-bold ms-1">*</span></label>
+                                    <select formControlName="idSection" class="form-select"
+                                        [class.is-invalid]="control('idSection').invalid && control('idSection').touched"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select section</option>
+                                        @for (item of sections(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                    @if (control('idSection').invalid && control('idSection').touched) {
+                                    <div class="invalid-feedback">
+                                        Section is required.
+                                    </div>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Job Type</label>
+                                    <select formControlName="idJobType" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select job type</option>
+                                        @for (item of jobTypes(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Employee Type</label>
+                                    <select formControlName="idEmployeeType" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select employee type</option>
+                                        @for (item of employeeTypes(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    <select formControlName="idGender" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select gender</option>
+                                        @for (item of genders(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Religion</label>
+                                    <select formControlName="idReligion" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select religion</option>
+                                        @for (item of religions(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Birth Date</label>
+                                    <input formControlName="birthDate" type="date" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Joining Date</label>
+                                    <input formControlName="joiningDate" type="date" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Week Off</label>
+                                    <select formControlName="idWeekOff" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select week off</option>
+                                        @for (item of weekOffs(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Father Name</label>
+                                    <input formControlName="fatherName" type="text" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Mother Name</label>
+                                    <input formControlName="motherName" type="text" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">NID</label>
+                                    <input formControlName="nationalIdentificationNumber" type="text"
+                                        class="form-control" [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Contact No</label>
+                                    <input formControlName="contactNo" type="text" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Address</label>
+                                    <textarea formControlName="address" rows="2" class="form-control"
+                                        [disabled]="!isFormEnabled()"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Present Address</label>
+                                    <textarea formControlName="presentAddress" rows="2" class="form-control"
+                                        [disabled]="!isFormEnabled()"></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Marital Status</label>
+                                    <select formControlName="idMaritalStatus" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="null">Select marital status</option>
+                                        @for (item of maritalStatuses(); track item.id) {
+                                        <option [value]="item.id">{{ item.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Reporting Manager ID</label>
+                                    <input formControlName="idReportingManager" type="number" class="form-control"
+                                        [disabled]="!isFormEnabled()" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Active</label>
+                                    <select formControlName="isActive" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="true">Yes</option>
+                                        <option [ngValue]="false">No</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Overtime Allowed</label>
+                                    <select formControlName="hasOvertime" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="true">Yes</option>
+                                        <option [ngValue]="false">No</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Attendance Bonus</label>
+                                    <select formControlName="hasAttendenceBonus" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="true">Yes</option>
+                                        <option [ngValue]="false">No</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Employee Image</label>
+                                    <input type="file" class="form-control" accept="image/*"
+                                        (change)="onEmployeeImageSelected($event)" [disabled]="!isFormEnabled()" />
+                                    @if (previewImage()) {
+                                    <div class="mt-3">
+                                        <img [src]="previewImage()" alt="Employee preview"
+                                            class="img-fluid rounded border" />
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <!-- Family Information -->
+                            <div class="card mb-3">
+                                <div
+                                    class="card-header d-flex flex-wrap  align-items-center justify-content-between gap-2 py-2">
+                                    <h6 class="mb-0">Family Information</h6>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary" (click)="addFamilyInfo()"
+                                            [disabled]="!isFormEnabled()">Add family
+                                            member</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div formArrayName="employeeFamilyInfos">
+                                        @for (family of familyInfos.controls; track $index) {
+                                        <div [formGroupName]="$index" class="border rounded p-3 mb-3">
+                                            <div class="row g-3 align-items-end">
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Name <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="name" type="text" class="form-control"
+                                                        [class.is-invalid]="family.get('name')?.invalid && family.get('name')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (family.get('name')?.invalid && family.get('name')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (family.get('name')?.errors?.['required']) {
+                                                        <div>Name is required.</div>
+                                                        }
+                                                        @if (family.get('name')?.errors?.['maxlength']) {
+                                                        <div>Maximum 50 characters allowed.</div>
+                                                        }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Relationship <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <select formControlName="idRelationship" class="form-select"
+                                                        [class.is-invalid]="family.get('idRelationship')?.invalid && family.get('idRelationship')?.touched"
+                                                        [disabled]="!isFormEnabled()">
+                                                        <option [ngValue]="null">Select relationship</option>
+                                                        @for (item of relationships(); track item.id) {
+                                                        <option [value]="item.id">{{ item.name }}</option>
+                                                        }
+                                                    </select>
+                                                    @if (family.get('idRelationship')?.invalid &&
+                                                    family.get('idRelationship')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        <div>Relationship is required.</div>
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Gender <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <select formControlName="idGender" class="form-select"
+                                                        [class.is-invalid]="family.get('idGender')?.invalid && family.get('idGender')?.touched"
+                                                        [disabled]="!isFormEnabled()">
+                                                        <option [ngValue]="null">Select gender</option>
+                                                        @for (item of genders(); track item.id) {
+                                                        <option [value]="item.id">{{ item.name }}</option>
+                                                        }
+                                                    </select>
+                                                    @if (family.get('idGender')?.invalid &&
+                                                    family.get('idGender')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        <div>Gender is required.</div>
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-8">
+                                                    <label class="form-label">Contact No</label>
+                                                    <input formControlName="contactNo" type="text" class="form-control"
+                                                        [class.is-invalid]="family.get('contactNo')?.invalid && family.get('contactNo')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (family.get('contactNo')?.invalid &&
+                                                    family.get('contactNo')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (family.get('contactNo')?.errors?.['maxlength']) {
+                                                        <div>Maximum 50 characters allowed.</div>
+                                                        }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <label class="form-label">Current Address</label>
+                                                    <textarea formControlName="currentAddress" rows="2"
+                                                        class="form-control"
+                                                        [class.is-invalid]="family.get('currentAddress')?.invalid && family.get('currentAddress')?.touched"
+                                                        [disabled]="!isFormEnabled()"></textarea>
+                                                    @if (family.get('currentAddress')?.invalid &&
+                                                    family.get('currentAddress')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (family.get('currentAddress')?.errors?.['maxlength']) {
+                                                        <div>Maximum 500 characters allowed.</div>
+                                                        }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <label class="form-label">Permanent Address</label>
+                                                    <textarea formControlName="permanentAddress" rows="2"
+                                                        class="form-control"
+                                                        [class.is-invalid]="family.get('permanentAddress')?.invalid && family.get('permanentAddress')?.touched"
+                                                        [disabled]="!isFormEnabled()"></textarea>
+                                                    @if (family.get('permanentAddress')?.invalid &&
+                                                    family.get('permanentAddress')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (family.get('permanentAddress')?.errors?.['maxlength']) {
+                                                        <div>Maximum 500 characters allowed.</div>
+                                                        }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-12 col-md-3">
+                                                    @if (isFormEnabled()) {
+                                                    <button type="button" class="btn btn-danger btn-sm w-100"
+                                                        (click)="removeFamilyInfo($index)">Remove</button>
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Education Information -->
+                            <div class="card mb-3">
+                                <div
+                                    class="card-header d-flex flex-wrap  align-items-center justify-content-between gap-2 py-2">
+                                    <h6 class="mb-0">Education Information</h6>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary"
+                                            (click)="addEducationInfo()" [disabled]="!isFormEnabled()">Add
+                                            education</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div formArrayName="employeeEducationInfos">
+                                        @for (education of educationInfos.controls; track $index) {
+                                        <div [formGroupName]="$index" class="border rounded p-3 mb-3">
+                                            <div class="row g-3 align-items-end">
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Level <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <select formControlName="idEducationLevel" class="form-select"
+                                                        [class.is-invalid]="education.get('idEducationLevel')?.invalid && education.get('idEducationLevel')?.touched"
+                                                        [disabled]="!isFormEnabled()">
+                                                        <option [ngValue]="null">Select level</option>
+                                                        @for (item of educationLevels(); track item.id) {
+                                                        <option [value]="item.id">{{ item.name }}</option>
+                                                        }
+                                                    </select>
+                                                    @if (education.get('idEducationLevel')?.invalid &&
+                                                    education.get('idEducationLevel')?.touched) {
+                                                    <div class="invalid-feedback">Level is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Examination <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <select formControlName="idEducationExamination" class="form-select"
+                                                        [class.is-invalid]="education.get('idEducationExamination')?.invalid && education.get('idEducationExamination')?.touched"
+                                                        [disabled]="!isFormEnabled()">
+                                                        <option [ngValue]="null">Select exam</option>
+                                                        @for (item of educationExaminations(); track item.id) {
+                                                        <option [value]="item.id">{{ item.name }}</option>
+                                                        }
+                                                    </select>
+                                                    @if (education.get('idEducationExamination')?.invalid &&
+                                                    education.get('idEducationExamination')?.touched) {
+                                                    <div class="invalid-feedback">Examination is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Result <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <select formControlName="idEducationResult" class="form-select"
+                                                        [class.is-invalid]="education.get('idEducationResult')?.invalid && education.get('idEducationResult')?.touched"
+                                                        [disabled]="!isFormEnabled()">
+                                                        <option [ngValue]="null">Select result</option>
+                                                        @for (item of educationResults(); track item.id) {
+                                                        <option [value]="item.id">{{ item.name }}</option>
+                                                        }
+                                                    </select>
+                                                    @if (education.get('idEducationResult')?.invalid &&
+                                                    education.get('idEducationResult')?.touched) {
+                                                    <div class="invalid-feedback">Result is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Major <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="major" type="text" class="form-control"
+                                                        [class.is-invalid]="education.get('major')?.invalid && education.get('major')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (education.get('major')?.invalid &&
+                                                    education.get('major')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (education.get('major')?.errors?.['required']) { <div>Major
+                                                            is required.</div> }
+                                                        @if (education.get('major')?.errors?.['maxlength']) { <div>
+                                                            Maximum 50 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Passing Year <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="passingYear" type="number"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('passingYear')?.invalid && education.get('passingYear')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (education.get('passingYear')?.invalid &&
+                                                    education.get('passingYear')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (education.get('passingYear')?.errors?.['required']) { <div>
+                                                            Passing year is required.</div> }
+                                                        @if (education.get('passingYear')?.errors?.['min']) { <div>Year
+                                                            must be 1900 or later.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Institute <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="instituteName" type="text"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('instituteName')?.invalid && education.get('instituteName')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (education.get('instituteName')?.invalid &&
+                                                    education.get('instituteName')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (education.get('instituteName')?.errors?.['required']) {
+                                                        <div>Institute name is required.</div> }
+                                                        @if (education.get('instituteName')?.errors?.['maxlength']) {
+                                                        <div>Maximum 250 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">CGPA</label>
+                                                    <input formControlName="cgpa" type="number" step="0.01"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('cgpa')?.invalid && education.get('cgpa')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Scale</label>
+                                                    <input formControlName="examScale" type="number" step="0.01"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('examScale')?.invalid && education.get('examScale')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Marks</label>
+                                                    <input formControlName="marks" type="number" step="0.01"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('marks')?.invalid && education.get('marks')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Duration</label>
+                                                    <input formControlName="duration" type="number" step="0.1"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('duration')?.invalid && education.get('duration')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <label class="form-label">Achievement</label>
+                                                    <textarea formControlName="achievement" rows="2"
+                                                        class="form-control"
+                                                        [class.is-invalid]="education.get('achievement')?.invalid && education.get('achievement')?.touched"
+                                                        [disabled]="!isFormEnabled()"></textarea>
+                                                </div>
+
+                                                <div class="col-12 col-md-3">
+                                                    @if (isFormEnabled()) {
+                                                    <button type="button" class="btn btn-danger btn-sm w-100"
+                                                        (click)="removeEducationInfo($index)">Remove</button>
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Documents -->
+                            <div class="card mb-3">
+                                <div
+                                    class="card-header  d-flex flex-wrap  align-items-center justify-content-between gap-2 py-2">
+                                    <h6 class="mb-0">Documents</h6>
+
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary"
+                                            (click)="addDocumentInfo()" [disabled]="!isFormEnabled()">Add
+                                            document</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div formArrayName="employeeDocuments">
+                                        @for (document of documentInfos.controls; track $index) {
+                                        <div [formGroupName]="$index" class="border rounded p-3 mb-3">
+                                            <div class="row g-3 align-items-end">
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Document Name <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="documentName" type="text"
+                                                        class="form-control"
+                                                        [class.is-invalid]="document.get('documentName')?.invalid && document.get('documentName')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (document.get('documentName')?.invalid &&
+                                                    document.get('documentName')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (document.get('documentName')?.errors?.['required']) { <div>
+                                                            Document name is required.</div> }
+                                                        @if (document.get('documentName')?.errors?.['maxlength']) {
+                                                        <div>Maximum 200 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Upload File <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input type="file" class="form-control" accept="*/*"
+                                                        (change)="onDocumentFileSelected($index, $event)"
+                                                        [class.is-invalid]="document.get('uploadedFile')?.invalid && document.get('uploadedFile')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (document.get('uploadedFile')?.invalid &&
+                                                    document.get('uploadedFile')?.touched) {
+                                                    <div class="invalid-feedback">File upload is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Upload Date <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="uploadDate" type="date" class="form-control"
+                                                        [class.is-invalid]="document.get('uploadDate')?.invalid && document.get('uploadDate')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (document.get('uploadDate')?.invalid &&
+                                                    document.get('uploadDate')?.touched) {
+                                                    <div class="invalid-feedback">Upload date is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Uploaded File Name</label>
+                                                    <input formControlName="fileName" type="text" class="form-control"
+                                                        [class.is-invalid]="document.get('fileName')?.invalid && document.get('fileName')?.touched"
+                                                        [disabled]="true" />
+                                                    @if (document.get('fileName')?.invalid &&
+                                                    document.get('fileName')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if (document.get('fileName')?.errors?.['required']) { <div>File
+                                                            name is required.</div> }
+                                                        @if (document.get('fileName')?.errors?.['maxlength']) { <div>
+                                                            Maximum 100 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    @if (isFormEnabled()) {
+                                                    <button type="button" class="btn btn-danger btn-sm w-100"
+                                                        (click)="removeDocumentInfo($index)">Remove</button>
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Professional Certifications -->
+                            <div class="card mb-3">
+                                <div
+                                    class="card-header  d-flex flex-wrap  align-items-center justify-content-between gap-2 py-2">
+                                    <h6 class="mb-0">Professional Certifications</h6>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary"
+                                            (click)="addCertificationInfo()" [disabled]="!isFormEnabled()">Add
+                                            certification</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div formArrayName="employeeProfessionalCertifications">
+                                        @for (certification of certificationInfos.controls; track $index) {
+                                        <div [formGroupName]="$index" class="border rounded p-3 mb-3">
+                                            <div class="row g-3 align-items-end">
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Certification Title <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="certificationTitle" type="text"
+                                                        class="form-control"
+                                                        [class.is-invalid]="certification.get('certificationTitle')?.invalid && certification.get('certificationTitle')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (certification.get('certificationTitle')?.invalid &&
+                                                    certification.get('certificationTitle')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if
+                                                        (certification.get('certificationTitle')?.errors?.['required'])
+                                                        { <div>Certification title is required.</div> }
+                                                        @if
+                                                        (certification.get('certificationTitle')?.errors?.['maxlength'])
+                                                        { <div>Maximum 255 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Institute <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="certificationInstitute" type="text"
+                                                        class="form-control"
+                                                        [class.is-invalid]="certification.get('certificationInstitute')?.invalid && certification.get('certificationInstitute')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (certification.get('certificationInstitute')?.invalid &&
+                                                    certification.get('certificationInstitute')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if
+                                                        (certification.get('certificationInstitute')?.errors?.['required'])
+                                                        { <div>Institute name is required.</div> }
+                                                        @if
+                                                        (certification.get('certificationInstitute')?.errors?.['maxlength'])
+                                                        { <div>Maximum 250 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Location <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="instituteLocation" type="text"
+                                                        class="form-control"
+                                                        [class.is-invalid]="certification.get('instituteLocation')?.invalid && certification.get('instituteLocation')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (certification.get('instituteLocation')?.invalid &&
+                                                    certification.get('instituteLocation')?.touched) {
+                                                    <div class="invalid-feedback">
+                                                        @if
+                                                        (certification.get('instituteLocation')?.errors?.['required']) {
+                                                        <div>Location is required.</div> }
+                                                        @if
+                                                        (certification.get('instituteLocation')?.errors?.['maxlength'])
+                                                        { <div>Maximum 250 characters allowed.</div> }
+                                                    </div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">From Date <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="fromDate" type="date" class="form-control"
+                                                        [class.is-invalid]="certification.get('fromDate')?.invalid && certification.get('fromDate')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (certification.get('fromDate')?.invalid &&
+                                                    certification.get('fromDate')?.touched) {
+                                                    <div class="invalid-feedback">From date is required.</div>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label class="form-label">To Date</label>
+                                                    <input formControlName="toDate" type="date" class="form-control"
+                                                        [class.is-invalid]="certification.get('toDate')?.invalid && certification.get('toDate')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                </div>
+
+                                                <div class="col-md-12 col-lg-3">
+                                                    @if (isFormEnabled()) {
+                                                    <button type="button" class="btn btn-danger btn-sm w-100"
+                                                        (click)="removeCertificationInfo($index)">Remove</button>
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if(message()){
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast show align-items-center text-bg-{{ messageType() }} border-0">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ message() }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="message.set(null)"></button>
+        </div>
+    </div>
+</div>
+}
