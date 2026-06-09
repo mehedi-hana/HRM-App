@@ -1,12 +1,15 @@
 using HanaHRMApi.Models;
 using HanaHRMApi.ServiceExtensions;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddOpenApi();
 
 // Register DbContext
 builder.Services.AddDbContext<HanaHrmContext>(options =>
@@ -26,17 +29,19 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Swagger Service
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "Hana HRM API";
+    });
+
 }
 
 app.UseHttpsRedirection();
@@ -44,5 +49,7 @@ app.UseHttpsRedirection();
 app.UseCors("HanaHRMPolicy");
 
 app.MapControllers();
+
+app.MapGet("", () => Results.Redirect("/scalar"));
 
 app.Run();

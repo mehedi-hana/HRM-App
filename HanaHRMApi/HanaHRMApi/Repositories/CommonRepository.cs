@@ -5,14 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HanaHRMApi.Repositories;
 
-public class CommonRepository : ICommonRepository
+public class CommonRepository(HanaHrmContext context) : ICommonRepository
 {
-    private readonly HanaHrmContext _context;
+    private readonly HanaHrmContext _context = context;
 
-    public CommonRepository(HanaHrmContext context)
-    {
-        _context = context;
-    }
 
     public Task<List<DropdownItemDto>> GetDepartmentsAsync(CancellationToken cancellationToken)
     {

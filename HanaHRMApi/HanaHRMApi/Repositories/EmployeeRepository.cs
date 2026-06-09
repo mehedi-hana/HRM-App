@@ -5,14 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HanaHRMApi.Repositories;
 
-public class EmployeeRepository : IEmployeeRepository
+public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
 {
-    private readonly HanaHrmContext _context;
-
-    public EmployeeRepository(HanaHrmContext context)
-    {
-        _context = context;
-    }
+    private readonly HanaHrmContext _context = context;
 
     public async Task<List<EmployeeListDto>> GetEmployeeListAsync(CancellationToken cancellationToken)
     {
