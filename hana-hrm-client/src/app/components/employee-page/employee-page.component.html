@@ -71,7 +71,7 @@
                     <form [formGroup]="employeeForm" novalidate>
                         <div class="mb-4">
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Employee Name <span
                                             class="text-danger fw-bold ms-1">*</span></label>
                                     <input formControlName="employeeName" type="text" class="form-control"
@@ -88,12 +88,12 @@
                                     </div>
                                     }
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Employee Name Bangla</label>
                                     <input formControlName="employeeNameBangla" type="text" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Designation</label>
                                     <select formControlName="idDesignation" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -103,7 +103,7 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Department <span
                                             class="text-danger fw-bold ms-1">*</span></label>
                                     <select formControlName="idDepartment" class="form-select"
@@ -120,7 +120,7 @@
                                     </div>
                                     }
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Section <span
                                             class="text-danger fw-bold ms-1">*</span></label>
                                     <select formControlName="idSection" class="form-select"
@@ -137,7 +137,7 @@
                                     </div>
                                     }
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Job Type</label>
                                     <select formControlName="idJobType" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -147,7 +147,7 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Employee Type</label>
                                     <select formControlName="idEmployeeType" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -157,7 +157,7 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Gender</label>
                                     <select formControlName="idGender" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -167,7 +167,7 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Religion</label>
                                     <select formControlName="idReligion" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -177,17 +177,17 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Birth Date</label>
                                     <input formControlName="birthDate" type="date" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Joining Date</label>
                                     <input formControlName="joiningDate" type="date" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Week Off</label>
                                     <select formControlName="idWeekOff" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -197,37 +197,37 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Father Name</label>
                                     <input formControlName="fatherName" type="text" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Mother Name</label>
                                     <input formControlName="motherName" type="text" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">NID</label>
                                     <input formControlName="nationalIdentificationNumber" type="text"
                                         class="form-control" [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Contact No</label>
                                     <input formControlName="contactNo" type="text" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Address</label>
                                     <textarea formControlName="address" rows="2" class="form-control"
                                         [disabled]="!isFormEnabled()"></textarea>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Present Address</label>
                                     <textarea formControlName="presentAddress" rows="2" class="form-control"
                                         [disabled]="!isFormEnabled()"></textarea>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Marital Status</label>
                                     <select formControlName="idMaritalStatus" class="form-select"
                                         [disabled]="!isFormEnabled()">
@@ -237,36 +237,12 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Reporting Manager ID</label>
                                     <input formControlName="idReportingManager" type="number" class="form-control"
                                         [disabled]="!isFormEnabled()" />
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Active</label>
-                                    <select formControlName="isActive" class="form-select"
-                                        [disabled]="!isFormEnabled()">
-                                        <option [ngValue]="true">Yes</option>
-                                        <option [ngValue]="false">No</option>
-                                    </select>
-                                </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Overtime Allowed</label>
-                                    <select formControlName="hasOvertime" class="form-select"
-                                        [disabled]="!isFormEnabled()">
-                                        <option [ngValue]="true">Yes</option>
-                                        <option [ngValue]="false">No</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Attendance Bonus</label>
-                                    <select formControlName="hasAttendenceBonus" class="form-select"
-                                        [disabled]="!isFormEnabled()">
-                                        <option [ngValue]="true">Yes</option>
-                                        <option [ngValue]="false">No</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
                                     <label class="form-label">Employee Image</label>
                                     <input type="file" class="form-control" accept="image/*"
                                         (change)="onEmployeeImageSelected($event)" [disabled]="!isFormEnabled()" />
@@ -276,6 +252,22 @@
                                             class="img-fluid rounded border" />
                                     </div>
                                     }
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Overtime Allowed</label>
+                                    <select formControlName="hasOvertime" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="true">Yes</option>
+                                        <option [ngValue]="false">No</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Attendance Bonus</label>
+                                    <select formControlName="hasAttendenceBonus" class="form-select"
+                                        [disabled]="!isFormEnabled()">
+                                        <option [ngValue]="true">Yes</option>
+                                        <option [ngValue]="false">No</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -298,7 +290,7 @@
                                         <div [formGroupName]="$index" class="border rounded p-3 mb-3">
                                             <div class="row g-3 align-items-end">
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Name <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="name" type="text" class="form-control"
@@ -316,7 +308,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Relationship <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <select formControlName="idRelationship" class="form-select"
@@ -335,7 +327,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Gender <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <select formControlName="idGender" class="form-select"
@@ -354,7 +346,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-8">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Contact No</label>
                                                     <input formControlName="contactNo" type="text" class="form-control"
                                                         [class.is-invalid]="family.get('contactNo')?.invalid && family.get('contactNo')?.touched"
@@ -369,7 +361,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-12">
+                                                <div class="col-6">
                                                     <label class="form-label">Current Address</label>
                                                     <textarea formControlName="currentAddress" rows="2"
                                                         class="form-control"
@@ -385,7 +377,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-12">
+                                                <div class="col-6">
                                                     <label class="form-label">Permanent Address</label>
                                                     <textarea formControlName="permanentAddress" rows="2"
                                                         class="form-control"
@@ -433,7 +425,7 @@
                                         <div [formGroupName]="$index" class="border rounded p-3 mb-3">
                                             <div class="row g-3 align-items-end">
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Level <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <select formControlName="idEducationLevel" class="form-select"
@@ -450,7 +442,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Examination <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <select formControlName="idEducationExamination" class="form-select"
@@ -467,7 +459,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Result <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <select formControlName="idEducationResult" class="form-select"
@@ -484,7 +476,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Major <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="major" type="text" class="form-control"
@@ -501,7 +493,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Passing Year <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="passingYear" type="number"
@@ -519,7 +511,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Institute <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="instituteName" type="text"
@@ -569,7 +561,7 @@
                                                         [disabled]="!isFormEnabled()" />
                                                 </div>
 
-                                                <div class="col-12">
+                                                <div class="col-6">
                                                     <label class="form-label">Achievement</label>
                                                     <textarea formControlName="achievement" rows="2"
                                                         class="form-control"
@@ -609,7 +601,7 @@
                                         <div [formGroupName]="$index" class="border rounded p-3 mb-3">
                                             <div class="row g-3 align-items-end">
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Document Name <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="documentName" type="text"
@@ -627,33 +619,16 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Upload File <span
-                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Upload File </label>
                                                     <input type="file" class="form-control" accept="*/*"
                                                         (change)="onDocumentFileSelected($index, $event)"
-                                                        [class.is-invalid]="document.get('uploadedFile')?.invalid && document.get('uploadedFile')?.touched"
                                                         [disabled]="!isFormEnabled()" />
-                                                    @if (document.get('uploadedFile')?.invalid &&
-                                                    document.get('uploadedFile')?.touched) {
-                                                    <div class="invalid-feedback">File upload is required.</div>
-                                                    }
                                                 </div>
 
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Upload Date <span
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Uploaded File Name <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
-                                                    <input formControlName="uploadDate" type="date" class="form-control"
-                                                        [class.is-invalid]="document.get('uploadDate')?.invalid && document.get('uploadDate')?.touched"
-                                                        [disabled]="!isFormEnabled()" />
-                                                    @if (document.get('uploadDate')?.invalid &&
-                                                    document.get('uploadDate')?.touched) {
-                                                    <div class="invalid-feedback">Upload date is required.</div>
-                                                    }
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Uploaded File Name</label>
                                                     <input formControlName="fileName" type="text" class="form-control"
                                                         [class.is-invalid]="document.get('fileName')?.invalid && document.get('fileName')?.touched"
                                                         [disabled]="true" />
@@ -665,6 +640,17 @@
                                                         @if (document.get('fileName')?.errors?.['maxlength']) { <div>
                                                             Maximum 100 characters allowed.</div> }
                                                     </div>
+                                                    }
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Upload Date <span
+                                                            class="text-danger fw-bold ms-1">*</span></label>
+                                                    <input formControlName="uploadDate" type="date" class="form-control"
+                                                        [class.is-invalid]="document.get('uploadDate')?.invalid && document.get('uploadDate')?.touched"
+                                                        [disabled]="!isFormEnabled()" />
+                                                    @if (document.get('uploadDate')?.invalid &&
+                                                    document.get('uploadDate')?.touched) {
+                                                    <div class="invalid-feedback">Upload date is required.</div>
                                                     }
                                                 </div>
 
@@ -699,7 +685,7 @@
                                         <div [formGroupName]="$index" class="border rounded p-3 mb-3">
                                             <div class="row g-3 align-items-end">
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Certification Title <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="certificationTitle" type="text"
@@ -719,7 +705,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Institute <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="certificationInstitute" type="text"
@@ -739,7 +725,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Location <span
                                                             class="text-danger fw-bold ms-1">*</span></label>
                                                     <input formControlName="instituteLocation" type="text"

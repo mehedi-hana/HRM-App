@@ -477,7 +477,7 @@ export class EmployeePageComponent implements OnInit {
             fileName: [value?.fileName ?? '', [Validators.required, Validators.maxLength(100)]],
             uploadDate: [this.formatDate(value?.uploadDate) ?? new Date().toISOString().slice(0, 10), Validators.required],
             uploadedFileExtention: [value?.uploadedFileExtention ?? ''],
-            uploadedFile: [value?.uploadedFile ?? '', Validators.required],
+            uploadedFile: [value?.uploadedFile ?? ''],
         });
     }
 
@@ -561,8 +561,8 @@ export class EmployeePageComponent implements OnInit {
         return value.startsWith('data:') ? value : `data:image/png;base64,${value}`;
     }
 
-    private setError(error: unknown): void {
-        this.errorMessage.set(error instanceof Error ? error.message : String(error));
+    private setError(error: any): void {
+        this.errorMessage.set(error.error?.message ?? 'An unexpected error occurred.');
     }
 
     private clearError(): void {

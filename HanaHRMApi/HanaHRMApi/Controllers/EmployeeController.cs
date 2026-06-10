@@ -38,26 +38,15 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponseDto<int>>> Create([FromBody] EmployeeCreateDto dto, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage);
-            return BadRequest(ApiResponseDto<int>.Failure("Validation failed.", errors));
-        }
-
         var newEmployeeId = await _employeeRepository.CreateEmployeeAsync(dto, cancellationToken);
         var response = ApiResponseDto<int>.SuccessResponse(newEmployeeId, "Employee created successfully.");
 
-        return CreatedAtAction(nameof(GetById), new { idClient = dto.IdClient, idEmployee = newEmployeeId }, response);
+        return CreatedAtAction(nameof(GetById), new { idEmployee = newEmployeeId }, response);
     }
 
     [HttpPut("{idEmployee}")]
     public async Task<ActionResult<ApiResponseDto<object>>> Update([FromRoute] int idEmployee, [FromBody] EmployeeUpdateDto dto, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage);
-            return BadRequest(ApiResponseDto<object>.Failure("Validation failed.", errors));
-        }
 
         if (dto.Id != idEmployee)
         {
