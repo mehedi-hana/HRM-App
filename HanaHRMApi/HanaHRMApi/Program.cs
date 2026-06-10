@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("HanaHRMPolicy",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.WithOrigins("")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -49,7 +49,5 @@ app.UseHttpsRedirection();
 app.UseCors("HanaHRMPolicy");
 
 app.MapControllers();
-
-app.MapGet("", () => Results.Redirect("/scalar"));
 
 app.Run();
