@@ -1,3 +1,4 @@
+using HanaHRMApi.Middlewares;
 using HanaHRMApi.Models;
 using HanaHRMApi.ServiceExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("HanaHRMPolicy",
         policy =>
         {
-            policy.WithOrigins("")
+            policy.WithOrigins("*")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -43,6 +44,8 @@ if (app.Environment.IsDevelopment())
     });
 
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
