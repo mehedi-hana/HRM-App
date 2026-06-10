@@ -26,7 +26,7 @@ export class EmployeePageComponent implements OnInit {
     errorMessage = signal<string | null>(null);
     previewImage = signal('');
     message = signal<string | null>(null);
-    messageType = signal<'success' | 'danger' | null>(null);
+    messageType = signal<'success' | 'warning' | 'danger' | null>(null);
 
     departments = signal<DropdownItem[]>([]);
     designations = signal<DropdownItem[]>([]);
@@ -218,7 +218,7 @@ export class EmployeePageComponent implements OnInit {
                 next: () => {
                     this.loadEmployeeList();
                     this.loadEmployeeDetail(id);
-                    this.showMessage('Employee updated successfully');
+                    this.showMessage('Employee updated successfully', 'warning');
                 },
                 error: (error) => this.setError(error),
             });
@@ -569,7 +569,7 @@ export class EmployeePageComponent implements OnInit {
         this.errorMessage.set(null);
     }
 
-    private showMessage(msg: string, type: 'success' | 'danger' = 'success') {
+    private showMessage(msg: string, type: 'success' | 'warning' | 'danger' = 'success') {
         this.message.set(msg);
         this.messageType.set(type);
 
