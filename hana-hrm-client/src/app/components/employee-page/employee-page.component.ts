@@ -14,8 +14,7 @@ import { ApiResponse } from '../../models/api-response.model';
     selector: 'app-employee-page',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule],
-    templateUrl: './employee-page.component.html',
-    styleUrls: ['./employee-page.component.css'],
+    templateUrl: './employee-page.component.html'
 })
 export class EmployeePageComponent implements OnInit {
     employeeForm: FormGroup;
