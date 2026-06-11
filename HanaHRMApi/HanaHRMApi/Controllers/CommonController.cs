@@ -106,4 +106,11 @@ public class CommonController : ControllerBase
         var result = await _commonRepository.GetEducationResultsAsync(cancellationToken);
         return Ok(ApiResponseDto<List<DropdownItemDto>>.SuccessResponse(result));
     }
+
+    [HttpGet("reportingmanagers")]
+    public async Task<ActionResult<ApiResponseDto<List<DropdownItemDto>>>> GetReportingManagers(CancellationToken cancellationToken)
+    {
+        var result = await _commonRepository.GetReportingManagersAsync(cancellationToken);
+        return Ok(ApiResponseDto<List<DropdownItemDto>>.SuccessResponse(result));
+    }
 }

@@ -178,4 +178,18 @@ public class CommonRepository(HanaHrmContext context) : ICommonRepository
             })
             .ToListAsync(cancellationToken);
     }
+
+    public Task<List<DropdownItemDto>> GetReportingManagersAsync(CancellationToken cancellationToken)
+    {
+        return _context.Employees
+            .AsNoTracking()
+            .OrderBy(item => item.Id)
+            .Select(item => new DropdownItemDto
+            {
+                Id = item.Id,
+                Name = item.EmployeeName ?? string.Empty
+            })
+            .ToListAsync(cancellationToken);
+    }
+
 }

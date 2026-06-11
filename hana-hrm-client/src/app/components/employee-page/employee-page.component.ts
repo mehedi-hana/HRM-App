@@ -41,6 +41,7 @@ export class EmployeePageComponent implements OnInit {
     educationLevels = signal<DropdownItem[]>([]);
     educationExaminations = signal<DropdownItem[]>([]);
     educationResults = signal<DropdownItem[]>([]);
+    reportingManagers = signal<DropdownItem[]>([]);
 
     isFormEnabled = computed(() => this.mode() !== 'view');
 
@@ -335,6 +336,10 @@ export class EmployeePageComponent implements OnInit {
         this.commonService.getEducationResults()
             .pipe(catchError(() => of({ data: [] } as ApiResponse)))
             .subscribe(res => this.educationResults.set(res.data));
+
+        this.commonService.reportingManagers()
+            .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+            .subscribe(res => this.reportingManagers.set(res.data));
     }
 
     private loadEmployeeList(): void {

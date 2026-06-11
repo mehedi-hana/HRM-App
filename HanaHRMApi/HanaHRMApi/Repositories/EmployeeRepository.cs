@@ -152,7 +152,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
 
         PopulateEmployeeDetails(dto, employee);
 
-        _context.Employees.Add(employee);
+        _context.Employees.Add(employee); 
         await _context.SaveChangesAsync(cancellationToken);
 
         return employee.Id;

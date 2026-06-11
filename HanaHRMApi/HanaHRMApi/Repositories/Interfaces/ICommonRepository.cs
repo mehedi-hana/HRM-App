@@ -17,4 +17,5 @@ public interface ICommonRepository
     Task<List<DropdownItemDto>> GetEducationLevelsAsync(CancellationToken cancellationToken);
     Task<List<DropdownItemDto>> GetEducationExaminationsAsync(CancellationToken cancellationToken);
     Task<List<DropdownItemDto>> GetEducationResultsAsync(CancellationToken cancellationToken);
+    Task<List<DropdownItemDto>> GetReportingManagersAsync(CancellationToken cancellationToken);
 }

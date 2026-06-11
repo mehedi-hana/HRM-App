@@ -59,4 +59,8 @@ export class CommonService extends BaseService {
   getEducationResults(): Observable<ApiResponse> {
     return this.get<ApiResponse>('api/common/educationresults');
   }
+
+  reportingManagers(): Observable<ApiResponse> {
+    return this.get<ApiResponse>('api/common/reportingmanagers');
+  }
 }
