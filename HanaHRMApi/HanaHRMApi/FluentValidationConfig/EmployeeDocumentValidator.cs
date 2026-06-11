@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using HanaHRMApi.Models;
+using HanaHRMApi.DTOs.Employee;
 
 namespace HanaHRMApi.FluentValidationConfig;
 
-public class EmployeeDocumentValidator : AbstractValidator<EmployeeDocument>
+public class EmployeeDocumentValidator : AbstractValidator<EmployeeDocumentDto>
 {
     public EmployeeDocumentValidator()
     {

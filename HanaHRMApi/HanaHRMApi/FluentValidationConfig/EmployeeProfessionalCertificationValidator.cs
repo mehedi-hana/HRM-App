@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using HanaHRMApi.Models;
+using HanaHRMApi.DTOs.Employee;
 
 namespace HanaHRMApi.FluentValidationConfig;
 
 
-public class EmployeeProfessionalCertificationValidator : AbstractValidator<EmployeeProfessionalCertification>
+public class EmployeeProfessionalCertificationValidator : AbstractValidator<EmployeeProfessionalCertificationDto>
 {
     public EmployeeProfessionalCertificationValidator()
     {

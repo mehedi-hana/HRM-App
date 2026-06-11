@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using HanaHRMApi.Models;
+using HanaHRMApi.DTOs.Employee;
 
 namespace HanaHRMApi.FluentValidationConfig;
 
 
-public class EmployeeFamilyInfoValidator : AbstractValidator<EmployeeFamilyInfo>
+public class EmployeeFamilyInfoValidator : AbstractValidator<EmployeeFamilyInfoDto>
 {
     public EmployeeFamilyInfoValidator()
     {

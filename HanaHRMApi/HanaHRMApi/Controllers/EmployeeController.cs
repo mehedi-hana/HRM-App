@@ -36,7 +36,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponseDto<int>>> Create([FromBody] EmployeeCreateDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponseDto<int>>> Create([FromBody] EmployeeDto dto, CancellationToken cancellationToken)
     {
         var newEmployeeId = await _employeeRepository.CreateEmployeeAsync(dto, cancellationToken);
         var response = ApiResponseDto<int>.SuccessResponse(newEmployeeId, "Employee created successfully.");
@@ -45,7 +45,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut("{idEmployee}")]
-    public async Task<ActionResult<ApiResponseDto<object>>> Update([FromRoute] int idEmployee, [FromBody] EmployeeUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponseDto<object>>> Update([FromRoute] int idEmployee, [FromBody] EmployeeDto dto, CancellationToken cancellationToken)
     {
 
         if (dto.Id != idEmployee)

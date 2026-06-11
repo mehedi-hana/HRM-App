@@ -117,7 +117,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         return employee is null ? null : employee;
     }
 
-    public async Task<int> CreateEmployeeAsync(EmployeeCreateDto dto, CancellationToken cancellationToken)
+    public async Task<int> CreateEmployeeAsync(EmployeeDto dto, CancellationToken cancellationToken)
     {
         var employee = new Employee
         {
@@ -158,7 +158,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         return employee.Id;
     }
 
-    public async Task<int> UpdateEmployeeAsync(EmployeeUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<int> UpdateEmployeeAsync(EmployeeDto dto, CancellationToken cancellationToken)
     {
         var existingEmployee = await _context.Employees
             .Include(item => item.EmployeeDocuments)
@@ -223,7 +223,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    private void PopulateEmployeeDetails(EmployeeCreateDto dto, Employee employee)
+    private void PopulateEmployeeDetails(EmployeeDto dto, Employee employee)
     {
         foreach (var item in dto.EmployeeDocuments)
         {
@@ -295,7 +295,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         }
     }
 
-    private void UpdateDocuments(Employee employee, EmployeeUpdateDto dto)
+    private void UpdateDocuments(Employee employee, EmployeeDto dto)
     {
         var existing = employee.EmployeeDocuments;
 
@@ -336,7 +336,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         }
     }
 
-    private void UpdateFamilyInfos(Employee employee, EmployeeUpdateDto dto)
+    private void UpdateFamilyInfos(Employee employee, EmployeeDto dto)
     {
         var existing = employee.EmployeeFamilyInfos;
 
@@ -381,7 +381,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         }
     }
 
-    private void UpdateEducationInfos(Employee employee, EmployeeUpdateDto dto)
+    private void UpdateEducationInfos(Employee employee, EmployeeDto dto)
     {
         var existing = employee.EmployeeEducationInfos;
 
@@ -436,7 +436,7 @@ public class EmployeeRepository(HanaHrmContext context) : IEmployeeRepository
         }
     }
 
-    private void UpdateCertifications(Employee employee, EmployeeUpdateDto dto)
+    private void UpdateCertifications(Employee employee, EmployeeDto dto)
     {
         var existing = employee.EmployeeProfessionalCertifications;
 

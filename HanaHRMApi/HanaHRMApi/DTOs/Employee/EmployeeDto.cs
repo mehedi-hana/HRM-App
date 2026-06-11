@@ -2,8 +2,9 @@
 
 namespace HanaHRMApi.DTOs.Employee
 {
-    public class EmployeeBaseDto
+    public class EmployeeDto
     {
+        public int? Id { get; set; }
         public int IdClient { get; set; }
         public string? EmployeeName { get; set; }
         public string? EmployeeNameBangla { get; set; }
