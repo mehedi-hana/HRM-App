@@ -1,26 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, OnInit, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import {
   applyEach,
-  FieldState,
+  disabled,
   form,
   FormField,
-  FormRoot,
   maxLength,
   min,
   required,
   SchemaPathTree,
+  submit,
 } from '@angular/forms/signals';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ApiResponse } from '../../models/api-response.model';
-import { DropdownItem } from '../../models/dropdown-item.model';
-import { EmployeeDetailDto } from '../../models/employee-detail.model';
-import { EmployeeListDto } from '../../models/employee-list.model';
-import { CommonService } from '../../services/common.service';
-import { EmployeeService } from '../../services/employee.service';
+import { ApiResponse } from '../../../models/api-response.model';
+import { DropdownItem } from '../../../models/dropdown-item.model';
+import { EmployeeDetailDto } from '../../../models/employee-detail.model';
+import { EmployeeListDto } from '../../../models/employee-list.model';
+import { CommonService } from '../../../services/common.service';
+import { EmployeeService } from '../../../services/employee.service';
 
-// ─── Plain-object interfaces for Signal Forms model ───────────────────────────
 
 interface FamilyInfoModel {
   id: number | null;
@@ -243,7 +242,7 @@ function certificationSchema(item: SchemaPathTree<CertificationModel>): void {
 @Component({
   selector: 'app-employee-page',
   standalone: true,
-  imports: [CommonModule, FormField, FormRoot],
+  imports: [CommonModule, FormField],
   templateUrl: './employee-page.component.new.html',
 })
 export class EmployeePageNewComponent implements OnInit {
@@ -277,6 +276,7 @@ export class EmployeePageNewComponent implements OnInit {
   employeeModel = signal<EmployeeFormModel>(blankEmployeeModel());
 
   employeeForm = form(this.employeeModel, (s) => {
+
     required(s.employeeName, { message: 'Employee name is required' });
     maxLength(s.employeeName, 250, { message: 'Employee name must not exceed 250 characters' });
     maxLength(s.employeeNameBangla, 250, {
@@ -295,15 +295,15 @@ export class EmployeePageNewComponent implements OnInit {
     applyEach(s.employeeEducationInfos, educationInfoSchema);
     applyEach(s.employeeDocuments, documentSchema);
     applyEach(s.employeeProfessionalCertifications, certificationSchema);
+
+    disabled(s, { when: () => !this.isFormEnabled() });
+
   });
 
-  // ── Derived ────────────────────────────────────────────────────────────────
   isFormEnabled = computed(() => this.mode() !== 'view');
 
-  constructor(
-    private readonly employeeService: EmployeeService,
-    private readonly commonService: CommonService,
-  ) {}
+   private employeeService = inject(EmployeeService);
+   private commonService = inject(CommonService);
 
   ngOnInit(): void {
     this.loadEmployeeList();
@@ -313,7 +313,6 @@ export class EmployeePageNewComponent implements OnInit {
 
   // ─── Array helpers ─────────────────────────────────────────────────────────
 
-  /** Read current array from the model, push a blank item, write back. */
   addFamilyInfo(): void {
     this.employeeModel.update((m) => ({
       ...m,
@@ -409,41 +408,27 @@ export class EmployeePageNewComponent implements OnInit {
 
   // ─── CRUD actions ──────────────────────────────────────────────────────────
 
-  save(): void {
-    this.clearError();
-    if (this.employeeForm().invalid()) {
-      // Touch all fields so errors become visible in the template
-      this.touchAll();
-      return;
-    }
-    this.employeeService.create(this.buildPayload(false)).subscribe({
-      next: () => {
-        this.loadEmployeeList();
-        this.resetFormView();
-        this.showMessage('Employee saved successfully');
-      },
-      error: (error) => this.setError(error),
-    });
-  }
-
-  update(): void {
-    this.clearError();
-    if (this.employeeForm().invalid()) {
-      this.touchAll();
-      return;
-    }
-    const id = this.employeeModel().id;
-    if (!id) {
-      this.setError('Cannot update employee without an identifier.');
-      return;
-    }
-    this.employeeService.update(id, this.buildPayload(true)).subscribe({
-      next: () => {
-        this.loadEmployeeList();
-        this.loadEmployeeDetail(id);
-        this.showMessage('Employee updated successfully', 'warning');
-      },
-      error: (error) => this.setError(error),
+  onSubmit(event: Event): void {
+    event.preventDefault();
+    submit(this.employeeForm, {
+      action: async () => {
+        if (this.mode() === 'create') {
+          await firstValueFrom(this.employeeService.create(this.buildPayload(false)));
+          this.loadEmployeeList();
+          this.resetFormView();
+          this.showMessage('Employee saved successfully');
+        } else if (this.mode() === 'edit') {
+          const id = this.employeeModel().id;
+          if (!id) {
+            this.setError('Cannot update employee without an identifier.');
+            return;
+          }
+          await firstValueFrom(this.employeeService.update(id, this.buildPayload(true)));
+          this.loadEmployeeList();
+          this.loadEmployeeDetail(id);
+          this.showMessage('Employee updated successfully', 'warning');
+        }
+      }
     });
   }
 
@@ -484,7 +469,7 @@ export class EmployeePageNewComponent implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     this.readFileAsBase64(file).then((base64) => {
-      // Update document fields at the given index via field-level set()
+
       const docItem = this.employeeForm.employeeDocuments[index];
       docItem.fileName().value.set(file.name);
       docItem.uploadedFileExtention().value.set(file.name.split('.').pop() ?? '');
@@ -495,29 +480,77 @@ export class EmployeePageNewComponent implements OnInit {
 
   // ─── Private helpers ───────────────────────────────────────────────────────
 
-  private loadDropdowns(): void {
-    const load = <T>(
-      obs: ReturnType<typeof this.commonService.getDepartments>,
-      target: ReturnType<typeof signal<T[]>>,
-    ) =>
-      obs
-        .pipe(catchError(() => of({ data: [] } as ApiResponse)))
-        .subscribe((res) => (target as any).set(res.data));
 
-    load(this.commonService.getDepartments(), this.departments);
-    load(this.commonService.getDesignations(), this.designations);
-    load(this.commonService.getGenders(), this.genders);
-    load(this.commonService.getJobTypes(), this.jobTypes);
-    load(this.commonService.getEmployeeTypes(), this.employeeTypes);
-    load(this.commonService.getMaritalStatuses(), this.maritalStatuses);
-    load(this.commonService.getReligions(), this.religions);
-    load(this.commonService.getSections(), this.sections);
-    load(this.commonService.getWeekOffs(), this.weekOffs);
-    load(this.commonService.getRelationships(), this.relationships);
-    load(this.commonService.getEducationLevels(), this.educationLevels);
-    load(this.commonService.getEducationExaminations(), this.educationExaminations);
-    load(this.commonService.getEducationResults(), this.educationResults);
-    load(this.commonService.reportingManagers(), this.reportingManagers);
+  private loadDropdowns(): void {
+    this.commonService
+      .getDepartments()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.departments.set(res.data));
+
+    this.commonService
+      .getDesignations()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.designations.set(res.data));
+
+    this.commonService
+      .getGenders()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.genders.set(res.data));
+
+    this.commonService
+      .getJobTypes()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.jobTypes.set(res.data));
+
+    this.commonService
+      .getEmployeeTypes()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.employeeTypes.set(res.data));
+
+    this.commonService
+      .getMaritalStatuses()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.maritalStatuses.set(res.data));
+
+    this.commonService
+      .getReligions()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.religions.set(res.data));
+
+    this.commonService
+      .getSections()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.sections.set(res.data));
+
+    this.commonService
+      .getWeekOffs()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.weekOffs.set(res.data));
+
+    this.commonService
+      .getRelationships()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.relationships.set(res.data));
+
+    this.commonService
+      .getEducationLevels()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.educationLevels.set(res.data));
+
+    this.commonService
+      .getEducationExaminations()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.educationExaminations.set(res.data));
+
+    this.commonService
+      .getEducationResults()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.educationResults.set(res.data));
+
+    this.commonService
+      .reportingManagers()
+      .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+      .subscribe((res) => this.reportingManagers.set(res.data));
   }
 
   private loadEmployeeList(): void {
@@ -539,10 +572,6 @@ export class EmployeePageNewComponent implements OnInit {
     });
   }
 
-  /**
-   * Translate the API DTO into a plain EmployeeFormModel and push it into the
-   * signal so Signal Forms re-renders all bound fields automatically.
-   */
   private patchModel(detail: EmployeeDetailDto): void {
     this.employeeModel.set({
       idClient: detail.idClient ?? 10001001,
@@ -628,10 +657,6 @@ export class EmployeePageNewComponent implements OnInit {
     this.clearError();
   }
 
-  /**
-   * Build the payload from the model signal's current value.
-   * No getRawValue() needed — just read the signal directly.
-   */
   private buildPayload(includeId: boolean): EmployeeDetailDto {
     const m = this.employeeModel();
     const payload: any = {
@@ -679,65 +704,6 @@ export class EmployeePageNewComponent implements OnInit {
     return payload;
   }
 
-  /**
-   * Signal Forms does not have a markAllAsTouched() equivalent yet.
-   * Touch each leaf field individually so the template can show errors.
-   */
-  private touchAll(): void {
-    const f = this.employeeForm;
-
-    const topLevel: Array<FieldState<string | number | null, string>> = [
-      f.employeeName(),
-      f.employeeNameBangla(),
-      f.idDepartment(),
-      f.idSection(),
-      f.fatherName(),
-      f.motherName(),
-      f.address(),
-      f.presentAddress(),
-      f.nationalIdentificationNumber(),
-      f.contactNo(),
-    ];
-    topLevel.forEach((field) => field.markAsTouched());
-
-    const m = this.employeeModel();
-
-    m.employeeFamilyInfos.forEach((_, i) => {
-      const item = f.employeeFamilyInfos[i];
-      [item.idGender(), item.idRelationship(), item.name()].forEach((field) =>
-        field.markAsTouched(),
-      );
-    });
-
-    m.employeeEducationInfos.forEach((_, i) => {
-      const item = f.employeeEducationInfos[i];
-      [
-        item.idEducationLevel(),
-        item.idEducationExamination(),
-        item.idEducationResult(),
-        item.major(),
-        item.passingYear(),
-        item.instituteName(),
-      ].forEach((field) => field.markAsTouched());
-    });
-
-    m.employeeDocuments.forEach((_, i) => {
-      const item = f.employeeDocuments[i];
-      [item.documentName(), item.fileName(), item.uploadDate()].forEach((field) =>
-        field.markAsTouched(),
-      );
-    });
-
-    m.employeeProfessionalCertifications.forEach((_, i) => {
-      const item = f.employeeProfessionalCertifications[i];
-      [
-        item.certificationTitle(),
-        item.certificationInstitute(),
-        item.instituteLocation(),
-        item.fromDate(),
-      ].forEach((field) => field.markAsTouched());
-    });
-  }
 
   private readFileAsBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
