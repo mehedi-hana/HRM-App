@@ -1,0 +1,635 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Employee List -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Employees</h5>
+                </div>
+                <div class="list-group list-group-flush employee-list">
+                    @for (employee of employees(); track employee.id) {
+                    <button type="button" class="list-group-item list-group-item-action"
+                        [class.active]="employee.id === selectedEmployeeId()" (click)="selectEmployee(employee)">
+                        <div>
+                            <strong>{{ employee.id }}</strong> - {{ employee.employeeName }}
+                            <br />
+                            <small class="text-muted">{{ employee.designationName || 'Unknown' }}</small>
+                        </div>
+                    </button>
+                    }
+                    @if (employees().length === 0) {
+                    <div class="list-group-item">No employees found.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Form -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm h-100">
+                <div
+                    class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+                    <div>
+                        <h5 class="card-title mb-0">Employee Form</h5>
+                        <small class="text-muted">
+                            {{ mode() === 'view' ? 'View mode' : mode() === 'create' ? 'Add new employee' : 'Edit
+                            employee' }}
+                        </small>
+                    </div>
+                    <div class="btn-toolbar gap-2" role="toolbar">
+                        @if (mode() === 'view') {
+                        <button type="button" class="btn btn-primary" (click)="startAdd()">Add</button>
+                        }
+                        @if (mode() === 'view' && selectedEmployee()) {
+                        <button type="button" class="btn btn-outline-secondary" (click)="enterEdit()">Edit</button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteEmployee()">Delete</button>
+                        }
+                        @if (mode() === 'create') {
+                        <button type="button" class="btn btn-success" (click)="save()">Save</button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+                        }
+                        @if (mode() === 'edit') {
+                        <button type="button" class="btn btn-success" (click)="update()">Update</button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-body form-body">
+                    @if (errorMessage()) {
+                    <div class="alert alert-danger">{{ errorMessage() }}</div>
+                    }
+
+                    <form [formRoot]="employeeForm">
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Employee Name <span class="text-danger">*</span></label>
+                                <input type="text" [formField]="employeeForm.employeeName" class="form-control" />
+                                @if (employeeForm.employeeName().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.employeeName().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Employee Name Bangla</label>
+                                <input type="text" [formField]="employeeForm.employeeNameBangla" class="form-control" />
+                                @if (employeeForm.employeeNameBangla().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.employeeNameBangla().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Department <span class="text-danger">*</span></label>
+                                <select [formField]="$any(employeeForm.idDepartment)" class="form-select">
+                                    <option value="">Select department</option>
+                                    @for (item of departments(); track item.id) {
+                                    <option [value]="item.id">{{ item.name }}</option>
+                                    }
+                                </select>
+                                @if (employeeForm.idDepartment().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.idDepartment().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Section <span class="text-danger">*</span></label>
+                                <select [formField]="$any(employeeForm.idSection)" class="form-select">
+                                    <option value="">Select section</option>
+                                    @for (item of sections(); track item.id) {
+                                    <option [value]="item.id">{{ item.name }}</option>
+                                    }
+                                </select>
+                                @if (employeeForm.idSection().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.idSection().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Father Name</label>
+                                <input type="text" [formField]="employeeForm.fatherName" class="form-control" />
+                                @if (employeeForm.fatherName().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.fatherName().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Mother Name</label>
+                                <input type="text" [formField]="employeeForm.motherName" class="form-control" />
+                                @if (employeeForm.motherName().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.motherName().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Contact No</label>
+                                <input type="text" [formField]="employeeForm.contactNo" class="form-control" />
+                                @if (employeeForm.contactNo().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.contactNo().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Address</label>
+                                <textarea rows="2" [formField]="employeeForm.address" class="form-control"></textarea>
+                                @if (employeeForm.address().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.address().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Present Address</label>
+                                <textarea rows="2" [formField]="employeeForm.presentAddress"
+                                    class="form-control"></textarea>
+                                @if (employeeForm.presentAddress().errors().length > 0) {
+                                <div class="invalid-feedback">
+                                    @for (err of employeeForm.presentAddress().errors(); track err.kind) {
+                                    <div>{{ err.message }}</div>
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between">
+                                <h6>Family Information</h6>
+                                <button type="button" class="btn btn-outline-primary" (click)="addFamilyInfo()">Add
+                                    family member</button>
+                            </div>
+                            <div class="card-body">
+                                @for (family of employeeForm.employeeFamilyInfos; track $index) {
+                                <div class="border rounded p-3 mb-3 row g-3">
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                                        <input type="text" [formField]="family.name" class="form-control" />
+                                        @if (family.name().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.name().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Gender <span class="text-danger">*</span></label>
+                                        <select [formField]="$any(family.idGender)" class="form-select">
+                                            <option value="">Select gender</option>
+                                            @for (item of genders(); track item.id) {
+                                            <option [value]="item.id">{{ item.name }}</option>
+                                            }
+                                        </select>
+                                        @if (family.idGender().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.idGender().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Relationship <span
+                                                class="text-danger">*</span></label>
+                                        <select [formField]="$any(family.idRelationship)" class="form-select">
+                                            <option value="">Select relationship</option>
+                                            @for (item of relationships(); track item.id) {
+                                            <option [value]="item.id">{{ item.name }}</option>
+                                            }
+                                        </select>
+                                        @if (family.idRelationship().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.idRelationship().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Date of Birth</label>
+                                        <input type="date" [formField]="family.dateOfBirth" class="form-control" />
+                                        @if (family.dateOfBirth().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.dateOfBirth().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Contact No</label>
+                                        <input type="text" [formField]="family.contactNo" class="form-control" />
+                                        @if (family.contactNo().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.contactNo().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Current Address</label>
+                                        <textarea rows="2" [formField]="family.currentAddress"
+                                            class="form-control"></textarea>
+                                        @if (family.currentAddress().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.currentAddress().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Permanent Address</label>
+                                        <textarea rows="2" [formField]="family.permanentAddress"
+                                            class="form-control"></textarea>
+                                        @if (family.permanentAddress().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of family.permanentAddress().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Education Infos -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between">
+                                <h6>Education Information</h6>
+                                <button type="button" class="btn btn-outline-primary" (click)="addEducationInfo()">Add
+                                    education</button>
+                            </div>
+                            <div class="card-body">
+                                @for (edu of employeeForm.employeeEducationInfos; track $index) {
+                                <div class="border rounded p-3 mb-3 row g-3">
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Education Level <span
+                                                class="text-danger">*</span></label>
+                                        <select [formField]="$any(edu.idEducationLevel)" class="form-select">
+                                            <option value="">Select level</option>
+                                            @for (item of educationLevels(); track item.id) {
+                                            <option [value]="item.id">{{ item.name }}</option>
+                                            }
+                                        </select>
+                                        @if (edu.idEducationLevel().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.idEducationLevel().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Examination <span class="text-danger">*</span></label>
+                                        <select [formField]="$any(edu.idEducationExamination)" class="form-select">
+                                            <option value="">Select examination</option>
+                                            @for (item of educationExaminations(); track item.id) {
+                                            <option [value]="item.id">{{ item.name }}</option>
+                                            }
+                                        </select>
+                                        @if (edu.idEducationExamination().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.idEducationExamination().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Result <span class="text-danger">*</span></label>
+                                        <select [formField]="$any(edu.idEducationResult)" class="form-select">
+                                            <option value="">Select result</option>
+                                            @for (item of educationResults(); track item.id) {
+                                            <option [value]="item.id">{{ item.name }}</option>
+                                            }
+                                        </select>
+                                        @if (edu.idEducationResult().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.idEducationResult().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Major <span class="text-danger">*</span></label>
+                                        <input type="text" [formField]="edu.major" class="form-control" />
+                                        @if (edu.major().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.major().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Passing Year <span
+                                                class="text-danger">*</span></label>
+                                        <input type="number" [formField]="edu.passingYear" class="form-control" />
+                                        @if (edu.passingYear().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.passingYear().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Institute Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" [formField]="edu.instituteName" class="form-control" />
+                                        @if (edu.instituteName().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.instituteName().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">CGPA</label>
+                                        <input type="number" step="0.01" [formField]="edu.cgpa" class="form-control" />
+                                        @if (edu.cgpa().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.cgpa().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Exam Scale</label>
+                                        <input type="number" [formField]="edu.examScale" class="form-control" />
+                                        @if (edu.examScale().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.examScale().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Marks</label>
+                                        <input type="number" [formField]="edu.marks" class="form-control" />
+                                        @if (edu.marks().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.marks().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Duration (years)</label>
+                                        <input type="number" [formField]="edu.duration" class="form-control" />
+                                        @if (edu.duration().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.duration().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Foreign Institute</label>
+                                        <input type="checkbox" [formField]="edu.isForeignInstitute"
+                                            class="form-check-input" />
+                                        @if (edu.isForeignInstitute().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.isForeignInstitute().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <label class="form-label">Achievement</label>
+                                        <textarea rows="2" [formField]="edu.achievement"
+                                            class="form-control"></textarea>
+                                        @if (edu.achievement().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of edu.achievement().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Documents -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between">
+                                <h6>Employee Documents</h6>
+                                <button type="button" class="btn btn-outline-primary" (click)="addDocumentInfo()">Add
+                                    document</button>
+                            </div>
+                            <div class="card-body">
+                                @for (doc of employeeForm.employeeDocuments; track $index) {
+                                <div class="border rounded p-3 mb-3 row g-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Document Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" [formField]="doc.documentName" class="form-control" />
+                                        @if (doc.documentName().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of doc.documentName().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">File Name <span class="text-danger">*</span></label>
+                                        <input type="text" [formField]="doc.fileName" class="form-control" />
+                                        @if (doc.fileName().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of doc.fileName().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Upload Date <span class="text-danger">*</span></label>
+                                        <input type="date" [formField]="doc.uploadDate" class="form-control" />
+                                        @if (doc.uploadDate().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of doc.uploadDate().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <label class="form-label">File</label>
+                                        <input type="file" class="form-control"
+                                            (change)="onDocumentFileSelected($index, $event)" />
+                                    </div>
+
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        <!-- Professional Certifications -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between">
+                                <h6>Professional Certifications</h6>
+                                <button type="button" class="btn btn-outline-primary"
+                                    (click)="addCertificationInfo()">Add certification</button>
+                            </div>
+                            <div class="card-body">
+                                @for (cert of employeeForm.employeeProfessionalCertifications; track $index) {
+                                <div class="border rounded p-3 mb-3 row g-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Certification Title <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" [formField]="cert.certificationTitle" class="form-control" />
+                                        @if (cert.certificationTitle().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of cert.certificationTitle().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Institute <span class="text-danger">*</span></label>
+                                        <input type="text" [formField]="cert.certificationInstitute"
+                                            class="form-control" />
+                                        @if (cert.certificationInstitute().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of cert.certificationInstitute().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Location <span class="text-danger">*</span></label>
+                                        <input type="text" [formField]="cert.instituteLocation" class="form-control" />
+                                        @if (cert.instituteLocation().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of cert.instituteLocation().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">From Date <span class="text-danger">*</span></label>
+                                        <input type="date" [formField]="cert.fromDate" class="form-control" />
+                                        @if (cert.fromDate().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of cert.fromDate().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">To Date</label>
+                                        <input type="date" [formField]="cert.toDate" class="form-control" />
+                                        @if (cert.toDate().errors().length > 0) {
+                                        <div class="invalid-feedback">
+                                            @for (err of cert.toDate().errors(); track err.kind) {
+                                            <div>{{ err.message }}</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-12"></div>
+                                    <div class="col-md-3">
+                                        @if (isFormEnabled()) {
+                                        <button type="button" class="btn btn-danger btn-sm w-100"
+                                            (click)="removeCertificationInfo($index)">Remove</button>
+                                        }
+                                    </div>
+
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
