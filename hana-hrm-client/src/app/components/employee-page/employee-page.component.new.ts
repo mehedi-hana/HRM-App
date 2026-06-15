@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   applyEach,
   FieldState,
@@ -198,8 +198,12 @@ function familyInfoSchema(item: SchemaPathTree<FamilyInfoModel>): void {
   required(item.name, { message: 'Name is required' });
   maxLength(item.name, 50, { message: 'Name must not exceed 50 characters' });
   maxLength(item.contactNo, 50, { message: 'Contact No must not exceed 50 characters' });
-  maxLength(item.currentAddress, 500, { message: 'Current address must not exceed 500 characters' });
-  maxLength(item.permanentAddress, 500, { message: 'Permanent address must not exceed 500 characters' });
+  maxLength(item.currentAddress, 500, {
+    message: 'Current address must not exceed 500 characters',
+  });
+  maxLength(item.permanentAddress, 500, {
+    message: 'Permanent address must not exceed 500 characters',
+  });
 }
 
 function educationInfoSchema(item: SchemaPathTree<EducationInfoModel>): void {
@@ -226,7 +230,9 @@ function certificationSchema(item: SchemaPathTree<CertificationModel>): void {
   required(item.certificationTitle, { message: 'Certification title is required' });
   maxLength(item.certificationTitle, 255, { message: 'Title must not exceed 255 characters' });
   required(item.certificationInstitute, { message: 'Institute is required' });
-  maxLength(item.certificationInstitute, 250, { message: 'Institute must not exceed 250 characters' });
+  maxLength(item.certificationInstitute, 250, {
+    message: 'Institute must not exceed 250 characters',
+  });
   required(item.instituteLocation, { message: 'Location is required' });
   maxLength(item.instituteLocation, 250, { message: 'Location must not exceed 250 characters' });
   required(item.fromDate, { message: 'From date is required' });
@@ -241,7 +247,6 @@ function certificationSchema(item: SchemaPathTree<CertificationModel>): void {
   templateUrl: './employee-page.component.new.html',
 })
 export class EmployeePageNewComponent implements OnInit {
-
   // ── UI state ───────────────────────────────────────────────────────────────
   employees = signal<EmployeeListDto[]>([]);
   selectedEmployee = signal<EmployeeDetailDto | null>(null);
@@ -274,7 +279,9 @@ export class EmployeePageNewComponent implements OnInit {
   employeeForm = form(this.employeeModel, (s) => {
     required(s.employeeName, { message: 'Employee name is required' });
     maxLength(s.employeeName, 250, { message: 'Employee name must not exceed 250 characters' });
-    maxLength(s.employeeNameBangla, 250, { message: 'Employee name (Bangla) must not exceed 250 characters' });
+    maxLength(s.employeeNameBangla, 250, {
+      message: 'Employee name (Bangla) must not exceed 250 characters',
+    });
     required(s.idDepartment, { message: 'Department is required' });
     required(s.idSection, { message: 'Section is required' });
     maxLength(s.fatherName, 250, { message: 'Father name must not exceed 250 characters' });
@@ -308,49 +315,49 @@ export class EmployeePageNewComponent implements OnInit {
 
   /** Read current array from the model, push a blank item, write back. */
   addFamilyInfo(): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeFamilyInfos: [...m.employeeFamilyInfos, blankFamilyInfo()],
     }));
   }
 
   removeFamilyInfo(index: number): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeFamilyInfos: m.employeeFamilyInfos.filter((_, i) => i !== index),
     }));
   }
 
   addEducationInfo(): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeEducationInfos: [...m.employeeEducationInfos, blankEducationInfo()],
     }));
   }
 
   removeEducationInfo(index: number): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeEducationInfos: m.employeeEducationInfos.filter((_, i) => i !== index),
     }));
   }
 
   addDocumentInfo(): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeDocuments: [...m.employeeDocuments, blankDocument()],
     }));
   }
 
   removeDocumentInfo(index: number): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeDocuments: m.employeeDocuments.filter((_, i) => i !== index),
     }));
   }
 
   addCertificationInfo(): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeProfessionalCertifications: [
         ...m.employeeProfessionalCertifications,
@@ -360,7 +367,7 @@ export class EmployeePageNewComponent implements OnInit {
   }
 
   removeCertificationInfo(index: number): void {
-    this.employeeModel.update(m => ({
+    this.employeeModel.update((m) => ({
       ...m,
       employeeProfessionalCertifications: m.employeeProfessionalCertifications.filter(
         (_, i) => i !== index,
@@ -489,8 +496,13 @@ export class EmployeePageNewComponent implements OnInit {
   // ─── Private helpers ───────────────────────────────────────────────────────
 
   private loadDropdowns(): void {
-    const load = <T>(obs: ReturnType<typeof this.commonService.getDepartments>, target: ReturnType<typeof signal<T[]>>) =>
-      obs.pipe(catchError(() => of({ data: [] } as ApiResponse))).subscribe(res => (target as any).set(res.data));
+    const load = <T>(
+      obs: ReturnType<typeof this.commonService.getDepartments>,
+      target: ReturnType<typeof signal<T[]>>,
+    ) =>
+      obs
+        .pipe(catchError(() => of({ data: [] } as ApiResponse)))
+        .subscribe((res) => (target as any).set(res.data));
 
     load(this.commonService.getDepartments(), this.departments);
     load(this.commonService.getDesignations(), this.designations);
@@ -592,14 +604,16 @@ export class EmployeePageNewComponent implements OnInit {
         uploadedFileExtention: d.uploadedFileExtention ?? '',
         uploadedFile: d.uploadedFile ?? '',
       })),
-      employeeProfessionalCertifications: (detail.employeeProfessionalCertifications ?? []).map((c) => ({
-        id: c.id ?? null,
-        certificationTitle: c.certificationTitle ?? '',
-        certificationInstitute: c.certificationInstitute ?? '',
-        instituteLocation: c.instituteLocation ?? '',
-        fromDate: this.formatDate(c.fromDate),
-        toDate: this.formatDate(c.toDate),
-      })),
+      employeeProfessionalCertifications: (detail.employeeProfessionalCertifications ?? []).map(
+        (c) => ({
+          id: c.id ?? null,
+          certificationTitle: c.certificationTitle ?? '',
+          certificationInstitute: c.certificationInstitute ?? '',
+          instituteLocation: c.instituteLocation ?? '',
+          fromDate: this.formatDate(c.fromDate),
+          toDate: this.formatDate(c.toDate),
+        }),
+      ),
     });
 
     this.previewImage.set(this.toPreviewImage(detail.employeeImage));
@@ -652,9 +666,7 @@ export class EmployeePageNewComponent implements OnInit {
       employeeEducationInfos: m.employeeEducationInfos.filter(
         (i) => i.major || i.instituteName || i.idEducationLevel,
       ),
-      employeeDocuments: m.employeeDocuments.filter(
-        (i) => i.documentName || i.uploadedFile,
-      ),
+      employeeDocuments: m.employeeDocuments.filter((i) => i.documentName || i.uploadedFile),
       employeeProfessionalCertifications: m.employeeProfessionalCertifications.filter(
         (i) => i.certificationTitle || i.certificationInstitute,
       ),
